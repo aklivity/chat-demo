@@ -21,9 +21,35 @@
     "@vue/cli-plugin-babel": "^3.2.0",
     "@vue/cli-plugin-eslint": "^3.2.0",
     "@vue/cli-service": "^3.2.0",
+    "@vue/eslint-config-typescript": "^7.0.0",
     "babel-eslint": "^10.0.1",
-    "eslint": "^5.8.0",
+    "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0-0",
     "vue-template-compiler": "^2.5.17"
-  }
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true,
+      "browser": true
+    },
+    "plugins": [
+      "vue"
+    ],
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended",
+      "plugin:@typescript-eslint/base",
+      "plugin:@typescript-eslint/eslint-recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2020
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
 }

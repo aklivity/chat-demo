@@ -5,19 +5,16 @@
     <div id="chat-messages" class="message-group" v-chat-scroll="{smooth: true}">
       <div class="message" v-for="(message, index) in messages" :key="index">
         <div class="clearfix">
-          <h4 class="message-title">{{ message.name }}</h4>
+          <h4 class="message-title float-left">{{ message.name }}</h4>
           <small class="text-muted float-right">@{{ message.username }}</small>
         </div>
-        <p class="message-text">
+        <p class="message-text float-left">
           {{ message.text }}
         </p>
         <div class="clearfix">
           <small class="text-muted float-right">{{ message.date }}</small>
         </div>
       </div>
-    </div>
-    <div class="user-typing">
-      <small class="text-muted" v-if="userTyping">@{{ userTyping }} is typing....</small>
     </div>
   </div>
 </template>

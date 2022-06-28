@@ -1,4 +1,5 @@
 import chatkit from '../chatkit';
+import {default as axios} from "axios";
 
 // Helper function for displaying error messages
 function handleError(commit, error) {
@@ -14,13 +15,14 @@ export default {
       // Connect user to ChatKit service
       const currentUser = await chatkit.connectUser(userId);
       commit('setUser', {
-        username: currentUser.id,
-        name: currentUser.name
+        id: currentUser.id,
+        username: currentUser.username,
+        name: currentUser.name,
+        state: currentUser.status
       });
       commit('setReconnect', false);
 
-      const axios = require('axios').default;
-      const response = await axios.get(`http://localhost:8080/members/1/channels`, {});
+      const response = await axios.get(`http://localhost:8080/channels`, {});
       const rooms = response.data.map(room => ({
         id: room.id,
         name: room.name
@@ -64,7 +66,8 @@ export default {
   },
   async logout({ commit }) {
     commit('reset');
-    chatkit.disconnectUser();
+    await chatkit.disconnectUser();
     window.localStorage.clear();
+
   }
 }

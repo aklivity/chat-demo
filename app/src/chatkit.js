@@ -12,38 +12,55 @@ let roomMessages = null;
 async function setMembers(roomId) {
   const response = await axios.get(`http://localhost:8080/channels/${roomId}/members`, {});
   const members = response.data.map(user => ({
-    username: user.id,
+    id: user.id,
+    username: user.username,
     name: user.name,
-    presence: user.presence.state
+    status: user.status
   }));
   store.commit('setUsers', members);
 }
 
 async function connectUser(userId) {
-  let username = userId == 1 ? "akram" : "john";
-  let name = userId == 1 ? "Akram" : "John";
+
+  const response = await axios.get(`http://localhost:8080/users/${userId}`, {});
+  const user = response.data[0];
+
+  let status = "online";
   currentUser = {
-    id: userId,
-    username: username,
-    name: name,
-    presence: "online"
+    id: user.id,
+    username: user.username,
+    name: user.name,
+    status: status
   };
+
+  await axios.put(`http://localhost:8080/users/${userId}`, {
+    id: userId,
+    username: user.username,
+    name: user.name,
+    status: status
+  });
+
   return currentUser;
 }
 
 async function setActiveRoom(roomId) {
-  const response = await axios.get(`http://localhost:8080/channels/${roomId}`, {});
   activeRoom = {
-    "id": response.data[0].id
+    "id": roomId
   }
 }
 
 async function subscribeToRoom(roomId) {
   store.commit('clearChatRoom');
 
+  await axios.post('http://localhost:8080/subscription/subscribe', {
+    userId: currentUser.id,
+    channelId: roomId}
+  );
+
   if (roomMessages != null) {
     roomMessages.close();
   }
+
   roomMessages = new EventSource(`http://localhost:8080/channels/${roomId}/messages`);
   roomMessages.onmessage = function (event) {
     const message = JSON.parse(event.data);
@@ -54,8 +71,10 @@ async function subscribeToRoom(roomId) {
       date: moment(message.createdAt).format('h:mm:ss a D-MM-YYYY')
     });
   };
+
   await setActiveRoom(roomId);
   await setMembers(roomId);
+
   return activeRoom;
 }
 async function sendMessage(text) {
@@ -69,7 +88,14 @@ async function sendMessage(text) {
   return "1231";
 }
 
-function disconnectUser() {
+async function disconnectUser() {
+  await axios.put(`http://localhost:8080/users/${currentUser.id}`, {
+    id: currentUser.id,
+    username: currentUser.username,
+    name: currentUser.name,
+    status: "offline"
+  });
+
   if (roomMessages != null) {
     roomMessages.close();
   }

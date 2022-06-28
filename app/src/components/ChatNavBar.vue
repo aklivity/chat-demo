@@ -4,7 +4,7 @@
       Vue Chat
     </b-navbar-brand>
     <b-navbar-nav class="ml-auto">
-<!--      <b-nav-text>{{ user.name }} | </b-nav-text>-->
+      <b-nav-text>{{ user.name }} | </b-nav-text>
       <b-nav-item href="#" @click="onLogout" active>Logout</b-nav-item>
     </b-navbar-nav>
   </b-navbar>
@@ -35,14 +35,14 @@ export default {
     },
     unload() {
       if(this.user.username) { // User hasn't logged out
-        this.setReconnect(true);
+        // this.setReconnect(true);
       }
     }
   },
   mounted() {
     window.addEventListener('beforeunload', this.unload);
     if(this.reconnect) {
-      this.login(this.user.username);
+      this.login(this.user.id);
     }
   }
 }

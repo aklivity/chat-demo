@@ -13,7 +13,7 @@
                     required>
       </b-form-input>
       </b-form-group>
-      <div class="clearfix">
+      <div class="clearfix" style="float: right">
         <b-button type="submit" variant="primary" class="float-right">
           Send
         </b-button>
@@ -36,7 +36,7 @@ export default {
       'user',
       'sending',
       'error',
-      'activeRoom'
+      'activeChannel'
     ]),
     ...mapGetters([
       'hasError'

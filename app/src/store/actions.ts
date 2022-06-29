@@ -1,5 +1,4 @@
 import chatkit from '../chatkit';
-import {default as axios} from "axios";
 
 // Helper function for displaying error messages
 function handleError(commit, error) {
@@ -8,12 +7,12 @@ function handleError(commit, error) {
 }
 
 export default {
-  async login({ commit, state }, userId) {
+  async load({ commit, state }) {
     try {
       commit('setError', '');
       commit('setLoading', true);
-      // Connect user to ChatKit service
-      const currentUser = await chatkit.connectUser(userId);
+
+      const currentUser = await chatkit.connectUser();
       commit('setUser', {
         id: currentUser.id,
         username: currentUser.username,
@@ -22,20 +21,16 @@ export default {
       });
       commit('setReconnect', false);
 
-      const response = await axios.get(`http://localhost:8080/channels`, {});
-      const rooms = response.data.map(room => ({
-        id: room.id,
-        name: room.name
-      }))
-      commit('setRooms', rooms);
+      const channels = await chatkit.getChannels();
+      commit('setChannels', channels);
 
-      // Subscribe user to a room
-      const activeRoom = state.activeRoom || rooms[0]; // pick last used room, or the first one
-      commit('setActiveRoom', {
-        id: activeRoom.id,
-        name: activeRoom.name
+      // Subscribe user to a channel
+      const activeChannel = state.activeChannel || channels[0]; // pick last used channel, or the first one
+      commit('setActiveChannel', {
+        id: activeChannel.id,
+        name: activeChannel.name
       });
-      await chatkit.subscribeToRoom(activeRoom.id);
+      await chatkit.subscribeToChannel(activeChannel.id);
 
       return true;
     } catch (error) {
@@ -44,10 +39,10 @@ export default {
       commit('setLoading', false);
     }
   },
-  async changeRoom({ commit }, roomId) {
+  async changeChannel({ commit }, channelId) {
     try {
-      const { id, name } = await chatkit.subscribeToRoom(roomId);
-      commit('setActiveRoom', { id, name });
+      const { id, name } = await chatkit.subscribeToChannel(channelId);
+      commit('setActiveChannel', { id, name });
     } catch (error) {
       handleError(commit, error)
     }
@@ -64,7 +59,7 @@ export default {
       commit('setSending', false);
     }
   },
-  async logout({ commit }) {
+  async unload({ commit }) {
     commit('reset');
     await chatkit.disconnectUser();
     window.localStorage.clear();

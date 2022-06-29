@@ -1,11 +1,10 @@
 <template>
   <div class="chat-dashboard">
-    <ChatNavBar />
     <b-container fluid class="ld-over" v-bind:class="{ running: loading }">
       <div class="ld ld-ring ld-spin"></div>
       <b-row>
         <b-col cols="2">
-          <RoomList />
+          <ChannelList />
         </b-col>
 
         <b-col cols="8">
@@ -30,18 +29,16 @@
 </template>
 
 <script>
-import ChatNavBar from '@/components/ChatNavBar.vue'
-import RoomList from '@/components/RoomList.vue'
+import ChannelList from '@/components/ChannelList.vue'
 import MessageList from '@/components/MessageList.vue'
 import MessageForm from '@/components/MessageForm.vue'
 import UserList from '@/components/UserList.vue'
-import { mapState } from 'vuex';
+import {mapActions, mapState} from 'vuex';
 
 export default {
   name: 'Chat',
   components: {
-    ChatNavBar,
-    RoomList,
+    ChannelList,
     UserList,
     MessageList,
     MessageForm
@@ -50,6 +47,17 @@ export default {
     ...mapState([
       'loading'
     ])
-  }
+  },
+  methods: {
+    ...mapActions([
+      'load'
+    ]),
+    async onLoad() {
+      await this.load();
+    }
+  },
+  beforeMount(){
+    this.onLoad()
+  },
 }
 </script>

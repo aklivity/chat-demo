@@ -11,21 +11,18 @@ export default {
   setReconnect(state, reconnect) {
     state.reconnect = reconnect;
   },
-  setActiveRoom(state, roomId) {
-    state.activeRoom = roomId;
+  setActiveChannel(state, channelId) {
+    state.activeChannel = channelId;
   },
-  setRooms(state, rooms) {
-    state.rooms = rooms
+  setChannels(state, channels) {
+    state.channels = channels
   },
-  setUsers(state, users) {
-    state.users = users
+  addUser(state, user) {
+    state.users.push(user);
   },
- clearChatRoom(state) {
+ clearChatChannel(state) {
     state.users = [];
     state.messages = [];
-  },
-  setMessages(state, messages) {
-    state.messages = messages
   },
   addMessage(state, message) {
     state.messages.push(message)
@@ -33,14 +30,11 @@ export default {
   setSending(state, status) {
     state.sending = status
   },
-  setUserTyping(state, userId) {
-    state.userTyping = userId
-  },
   reset(state) {
     state.error = null;
     state.users = [];
     state.messages = [];
-    state.rooms = [];
+    state.channels = [];
     state.user = null
   }
 }

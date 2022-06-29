@@ -2,7 +2,8 @@
   <div class="message-list">
     <h4>Messages</h4>
     <hr>
-    <div id="chat-messages" class="message-group" v-chat-scroll="{smooth: true}">
+    <div id="chat-messages" class="message-group" >
+      <perfect-scrollbar>
       <div class="message" v-for="(message, index) in messages" :key="index">
         <div class="clearfix">
           <h4 class="message-title float-left">{{ message.name }}</h4>
@@ -15,6 +16,7 @@
           <small class="text-muted float-right">{{ message.date }}</small>
         </div>
       </div>
+      </perfect-scrollbar>
     </div>
   </div>
 </template>

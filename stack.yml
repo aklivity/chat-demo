@@ -57,18 +57,18 @@ services:
       /opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server kafka.internal.net:29092 --list
       "
 
-  # chat-service:
-  #   image: "chat-service:latest"
-  #   networks:
-  #     - net0
-  #   environment:
-  #     SPRING_KAFKA_APPLICATION_ID: chat-service
-  #     SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka.internal.net:29092
-  #     CHAT_USERS_TOPIC: users
-  #     CHAT_CHANNELS_TOPIC: channels
-  #     CHAT_SUBSCRIPTIONS_TOPIC: subscriptions
-  #     CHAT_COMMANDS_TOPIC: commands
-  #     CHAT_MESSAGEs_TOPIC: messages
+  chat-service:
+    image: "chat-service:latest"
+    networks:
+      - net0
+    environment:
+      SPRING_KAFKA_APPLICATION_ID: chat-service
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka.internal.net:29092
+      CHAT_USERS_TOPIC: users
+      CHAT_CHANNELS_TOPIC: channels
+      CHAT_SUBSCRIPTIONS_TOPIC: subscriptions
+      CHAT_COMMANDS_TOPIC: commands
+      CHAT_MESSAGEs_TOPIC: messages
 
   zilla:
     image: "ghcr.io/aklivity/zilla:latest"

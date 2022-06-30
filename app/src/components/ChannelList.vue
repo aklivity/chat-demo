@@ -15,22 +15,34 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import {mapState, mapMutations} from 'vuex'
+import {useAuth0} from "@auth0/auth0-vue";
 
 export default {
   name: 'ChannelList',
+  setup() {
+    const auth0 = useAuth0();
+
+    return {
+      auth0: auth0
+    }
+  },
   computed: {
     ...mapState([
       'channels',
       'activeChannel'
     ]),
+    ...mapMutations([
+        'setActiveChannel'
+    ])
   },
   methods: {
-    ...mapActions([
-      'changeChannel'
-    ]),
     onChange(channel) {
-        this.changeChannel(channel.id)
+      try {
+        this.setActiveChannel({ id: channel.id, name: channel.name })
+      } catch (error) {
+        this.setError( error.message)
+      }
     }
   }
 }

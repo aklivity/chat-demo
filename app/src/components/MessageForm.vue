@@ -23,9 +23,17 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapGetters } from 'vuex'
+import {mapActions, mapState, mapGetters, mapMutations} from 'vuex'
+import {useAuth0} from "@auth0/auth0-vue";
+import {default as axios} from "axios";
 export default {
   name: 'message-form',
+  setup() {
+    const auth0 = useAuth0();
+    return {
+      auth0: auth0
+    }
+  },
   data() {
     return {
       message: ''
@@ -38,6 +46,10 @@ export default {
       'error',
       'activeChannel'
     ]),
+    ...mapMutations([
+       'setError',
+       'setSending'
+    ]),
     ...mapGetters([
       'hasError'
     ])
@@ -47,9 +59,28 @@ export default {
       'sendMessage',
     ]),
     async onSubmit() {
-      const result = await this.sendMessage(this.message);
-      if(result) {
-        this.message = '';
+      try {
+        this.setError('');
+        this.setSending(true);
+        const auth0 = useAuth0();
+        const accessToken = await auth0.getAccessTokenSilently();
+
+        const result = await axios.post(`http://localhost:8080/channels/${this.activeChannel.id}/messages`, {
+          senderId: this.user.id,
+          senderUsername: this.user.username,
+          senderName: this.user.name,
+          text: this.message,
+          date: new Date()
+        },{
+          headers: { Authorization: `Bearer ${accessToken}`}
+        })
+        if(result.status == 204) {
+          this.message = '';
+        }
+      } catch (error) {
+        this.setError(error.message)
+      } finally {
+        this.setSending(false);
       }
     }
   }

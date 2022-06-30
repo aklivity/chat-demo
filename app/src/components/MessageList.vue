@@ -23,14 +23,44 @@
 
 <script>
 import { mapState } from 'vuex'
+import store from "@/store";
+import moment from "moment";
+import {watch} from "vue";
+import {useAuth0} from "@auth0/auth0-vue";
 
 export default {
   name: 'message-list',
+  setup() {
+    const auth0 = useAuth0();
+    return {
+      auth0: auth0
+    }
+  },
   computed: {
     ...mapState([
       'messages',
-      'userTyping'
+      'activeChannel'
     ])
+  },
+  mounted() {
+    const auth0 = this.auth0;
+    let channelMessages;
+
+    async function subscriberToChannelMessages(channelId) {
+      const accessToken = await auth0.getAccessTokenSilently();
+      channelMessages?.close();
+      channelMessages = new EventSource(`http://localhost:8080/channels/${channelId}/messages?access_token=${accessToken}`);
+      channelMessages.onmessage = function (event) {
+        const message = JSON.parse(event.data);
+        store.commit('addMessage', {
+          name: message.senderName,
+          username: message.senderUsername,
+          text: message.text,
+          date: moment(message.createdAt).format('h:mm:ss a D-MM-YYYY')
+        });
+      };
+    }
+    watch(this.activeChannel, subscriberToChannelMessages)
   }
 }
 </script>

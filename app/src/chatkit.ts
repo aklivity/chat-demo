@@ -1,8 +1,8 @@
 import moment from 'moment'
 import store from './store'
 import {default as axios} from "axios";
-import {useAuth0} from "@auth0/auth0-vue";
 import jwt_decode from "jwt-decode";
+import {useAuth0} from "@auth0/auth0-vue";
 
 let currentUser:any = null;
 let activeChannel:any = null;

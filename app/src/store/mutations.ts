@@ -15,7 +15,7 @@ export default {
     state.activeChannel = channelId;
   },
   setChannels(state, channels) {
-    state.channels = channels
+    state.channels = channels;
   },
   addUser(state, user) {
     state.users.push(user);

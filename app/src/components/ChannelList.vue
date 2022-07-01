@@ -17,6 +17,7 @@
 <script>
 import {mapState, mapMutations} from 'vuex'
 import {useAuth0} from "@auth0/auth0-vue";
+import {default as axios} from "axios";
 
 export default {
   name: 'ChannelList',
@@ -27,22 +28,61 @@ export default {
       auth0: auth0
     }
   },
+  data() {
+    return {
+      channels: []
+    }
+  },
   computed: {
     ...mapState([
-      'channels',
-      'activeChannel'
+      'activeChannel',
+      'user'
     ]),
-    ...mapMutations([
-        'setActiveChannel'
-    ])
+  },
+  async created() {
+    const auth0 = this.auth0;
+    const accessToken = await auth0.getAccessTokenSilently();
+
+    const response = await axios.get(`http://localhost:8080/channels`, {
+      headers: { Authorization: `Bearer ${accessToken}`}
+    });
+
+    response.data.map(channel => this.channels.push({
+      id: channel.id,
+      name: channel.name
+    }));
+
+    const activeChannel = this.activeChannel || this.channels[0];
+    this.setActiveChannel(activeChannel);
+    await this.subscribeToChannel(activeChannel.id);
+  },
+  watch: {
+    activeChannel(newChannel) {
+      this.subscribeToChannel(newChannel.id);
+    }
   },
   methods: {
+    ...mapMutations([
+      'setActiveChannel',
+      'setLoading'
+    ]),
     onChange(channel) {
       try {
         this.setActiveChannel({ id: channel.id, name: channel.name })
       } catch (error) {
         this.setError( error.message)
       }
+    },
+    async subscribeToChannel(channelId) {
+      const accessToken = await this.auth0.getAccessTokenSilently();
+      await axios.post('http://localhost:8080/subscription/subscribe', {
+        userId: this.user.id,
+        channelId: channelId
+      }, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
     }
   }
 }

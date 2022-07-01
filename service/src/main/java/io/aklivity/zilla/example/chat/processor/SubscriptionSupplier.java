@@ -39,11 +39,14 @@ public class SubscriptionSupplier implements ProcessorSupplier<String, Subscript
         public void process(Record<String, Subscription> record)
         {
             final Subscription subscription = record.value();
-            Headers headers = new RecordHeaders();
-            headers.add("user-id", subscription.getUserId().getBytes());
-            headers.add("channel-id", subscription.getChannelId().getBytes());
-            Record<String, Subscription> newRecord = record.withHeaders(headers);
-            this.context.forward(newRecord);
+            if (subscription != null)
+            {
+                final Headers headers = new RecordHeaders();
+                headers.add("user-id", subscription.getUserId().getBytes());
+                headers.add("channel-id", subscription.getChannelId().getBytes());
+                Record<String, Subscription> newRecord = record.withHeaders(headers);
+                this.context.forward(newRecord);
+            }
         }
     }
 }

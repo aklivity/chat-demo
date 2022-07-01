@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import {mapActions, mapState, mapGetters, mapMutations} from 'vuex'
+import {mapState, mapGetters, mapMutations} from 'vuex'
 import {useAuth0} from "@auth0/auth0-vue";
 import {default as axios} from "axios";
 export default {
@@ -46,24 +46,20 @@ export default {
       'error',
       'activeChannel'
     ]),
-    ...mapMutations([
-       'setError',
-       'setSending'
-    ]),
     ...mapGetters([
       'hasError'
     ])
   },
   methods: {
-    ...mapActions([
-      'sendMessage',
+    ...mapMutations([
+      'setError',
+      'setSending'
     ]),
     async onSubmit() {
       try {
         this.setError('');
         this.setSending(true);
-        const auth0 = useAuth0();
-        const accessToken = await auth0.getAccessTokenSilently();
+        const accessToken = await this.auth0.getAccessTokenSilently();
 
         const result = await axios.post(`http://localhost:8080/channels/${this.activeChannel.id}/messages`, {
           senderId: this.user.id,

@@ -25,7 +25,6 @@
 import { mapState } from 'vuex'
 import store from "@/store";
 import moment from "moment";
-import {watch} from "vue";
 import {useAuth0} from "@auth0/auth0-vue";
 
 export default {
@@ -36,23 +35,36 @@ export default {
       auth0: auth0
     }
   },
+  data(){
+    return {
+      messages: [],
+      channelMessagesStream: null
+    }
+  },
   computed: {
     ...mapState([
-      'messages',
       'activeChannel'
     ])
   },
-  mounted() {
-    const auth0 = this.auth0;
-    let channelMessages;
-
-    async function subscriberToChannelMessages(channelId) {
-      const accessToken = await auth0.getAccessTokenSilently();
-      channelMessages?.close();
-      channelMessages = new EventSource(`http://localhost:8080/channels/${channelId}/messages?access_token=${accessToken}`);
-      channelMessages.onmessage = function (event) {
+  async created() {
+    if (this.activeChannel) {
+      await this.subscriberToChannelMessages(this.messages, this.activeChannel.id);
+    }
+  },
+  watch: {
+    activeChannel(newChannel) {
+      this.messages = [];
+      this.subscriberToChannelMessages(this.messages, newChannel.id);
+    },
+  },
+  methods: {
+    async subscriberToChannelMessages(messages, channelId) {
+      const accessToken = await this.auth0.getAccessTokenSilently();
+      this.channelMessagesStream?.close();
+      this.channelMessagesStream = new EventSource(`http://localhost:8080/channels/${channelId}/messages?access_token=${accessToken}`);
+      this.channelMessagesStream.onmessage = function (event) {
         const message = JSON.parse(event.data);
-        store.commit('addMessage', {
+        messages.push({
           name: message.senderName,
           username: message.senderUsername,
           text: message.text,
@@ -60,7 +72,6 @@ export default {
         });
       };
     }
-    watch(this.activeChannel, subscriberToChannelMessages)
   }
 }
 </script>
@@ -71,7 +82,7 @@ export default {
   padding-right: 15px;
 }
 .message-group {
-  height: 65vh !important;
+  height: 60vh !important;
   overflow-y: scroll;
 }
 .message {

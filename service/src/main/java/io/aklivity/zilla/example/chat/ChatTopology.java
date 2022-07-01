@@ -72,7 +72,7 @@ public class ChatTopology
                     }
                     else
                     {
-                        return null;
+                        throw new UnsupportedOperationException("Unsupported command");
                     }
                 })
                 .toTable(Materialized.<String, Subscriber, KeyValueStore<String, Subscriber>>
@@ -82,7 +82,7 @@ public class ChatTopology
 
         final KTable<String, User> userTable = streamBuilder.stream(this.chatUsersTopic,
                 Consumed.with(this.stringSerde, this.userSerde))
-                .map((key, value) -> new KeyValue(value.getId(), value))
+                .map((key, value) -> new KeyValue(key, value))
                 .toTable(Materialized.<String, User, KeyValueStore<String, User>>
                     as("USER-MV")
                     .withKeySerde(stringSerde)

@@ -96,24 +96,31 @@
 
 <script>
 import { useAuth0 } from '@auth0/auth0-vue';
+import {mapActions} from "vuex";
 
 export default {
   name: "NavBar",
   setup() {
     const auth0 = useAuth0();
-
     return {
+      auth0: auth0,
       isAuthenticated: auth0.isAuthenticated,
       isLoading: auth0.isLoading,
-      user: auth0.user,
-      login() {
-        auth0.loginWithRedirect();
-      },
-      logout() {
-        auth0.logout({
-          returnTo: window.location.origin
-        });
-      }
+      user: auth0.user
+    }
+  },
+  methods: {
+    ...mapActions([
+        'unload'
+    ]),
+    logout() {
+      this.auth0.logout({
+        returnTo: window.location.origin
+      });
+    },
+    login() {
+      this.unload();
+      this.auth0.loginWithRedirect();
     }
   }
 };

@@ -11,8 +11,8 @@ export default {
   setReconnect(state, reconnect) {
     state.reconnect = reconnect;
   },
-  setActiveChannel(state, channelId) {
-    state.activeChannel = channelId;
+  setActiveChannel(state, channel) {
+    state.activeChannel = channel;
   },
   setChannels(state, channels) {
     state.channels = channels;

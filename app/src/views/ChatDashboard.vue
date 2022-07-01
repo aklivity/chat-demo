@@ -74,12 +74,12 @@ export default {
         this.setLoading(true)
         const accessToken = await this.auth0.getAccessTokenSilently();
         const decodedToken = jwt_decode(accessToken);
-        const userId = decodedToken.sub;
+        const userId = decodedToken.sub.split("|")[1];
         const userInfo = this.auth0.user.value;
         const status = "online";
 
         const currentUser = {
-          id: userId,
+          id: `${userId}`,
           username: userInfo.nickname,
           name: userInfo.name,
           status: status
@@ -94,36 +94,13 @@ export default {
             Authorization: `Bearer ${accessToken}`
           }
         });
+
         this.setUser({
           id: currentUser.id,
           username: currentUser.username,
           name: currentUser.name,
           state: currentUser.status
         })
-
-        const response = await axios.get(`http://localhost:8080/channels`, {
-          headers: { Authorization: `Bearer ${accessToken}`}
-        });
-        const channels = response.data.map(channel => ({
-          id: channel.id,
-          name: channel.name
-        }));
-
-        this.setChannels(channels);
-        const activeChannel = this.activeChannel || channels[0]; // pick last used channel, or the first one
-        this.setActiveChannel({
-          id: activeChannel.id,
-          name: activeChannel.name
-        });
-
-        await axios.post('http://localhost:8080/subscription/subscribe', {
-          userId: currentUser.id,
-          channelId: activeChannel.id
-        }, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        });
 
         this.setReconnect(false);
         this.setLoading(false);

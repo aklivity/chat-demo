@@ -17,7 +17,7 @@ const store = createStore({
     error: null,
     user: [],
     reconnect: false,
-    activeChannel: null,
+    activeChannel: {},
     channels: [],
     users: [],
     messages: [],

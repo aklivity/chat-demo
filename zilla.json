@@ -5,7 +5,7 @@
            "type":"jwt",
            "options": {
               "issuer": "https://aklivity.us.auth0.com/",
-              "audience": "http://localhost:8080/tasks",
+              "audience": "http://localhost:8080/chat",
               "keys": [ {
                     "alg":"RS256",
                     "kty":"RSA",
@@ -77,6 +77,12 @@
                                 ":method": "GET",
                                 ":path": "/channels/*/members"
                             }
+                        },
+                        {
+                            "headers": {
+                                ":method": "GET",
+                                ":path": "/channels"
+                            }
                         }
                     ],
                     "exit": "sse_server0"
@@ -93,12 +99,6 @@
                             "headers": {
                                 ":method": "POST",
                                 ":path": "/channels/*"
-                            }
-                        },
-                        {
-                            "headers": {
-                                ":method": "GET",
-                                ":path": "/channels"
                             }
                         },
                         {
@@ -149,7 +149,7 @@
             "routes": [
                 {
                     "guarded": {
-                        "jwt0": [ "write:tasks" ]
+                        "jwt0": [ "write:channels" ]
                     },
                     "when": [
                         {
@@ -171,7 +171,7 @@
                 },
                 {
                     "guarded": {
-                        "jwt0": [ "write:tasks" ]
+                        "jwt0": [ "write:channels" ]
                     },
                     "when": [
                         {
@@ -189,7 +189,7 @@
                 },
                 {
                     "guarded": {
-                        "jwt0": [ "read:tasks" ]
+                        "jwt0": [ "read:channels" ]
                     },
                     "when": [
                         {
@@ -210,7 +210,7 @@
                 },
                 {
                     "guarded": {
-                        "jwt0": [ "read:tasks" ]
+                        "jwt0": [ "read:channels" ]
                     },
                     "when": [
                         {
@@ -237,7 +237,7 @@
                 },
                 {
                     "guarded": {
-                        "jwt0": [ "write:tasks" ]
+                        "jwt0": [ "write:subscriptions" ]
                     },
                     "when": [
                         {
@@ -258,7 +258,7 @@
                 },
                 {
                     "guarded": {
-                        "jwt0": [ "write:tasks" ]
+                        "jwt0": [ "write:users" ]
                     },
                     "when": [
                         {
@@ -276,7 +276,7 @@
                 },
                 {
                     "guarded": {
-                        "jwt0": [ "write:tasks" ]
+                        "jwt0": [ "write:users" ]
                     },
                     "when": [
                         {
@@ -294,7 +294,7 @@
                 },
                 {
                     "guarded": {
-                        "jwt0": [ "read:tasks" ]
+                        "jwt0": [ "read:users" ]
                     },
                     "when": [
                         {
@@ -315,7 +315,7 @@
                 },
                 {
                     "guarded": {
-                        "jwt0": [ "read:tasks" ]
+                        "jwt0": [ "read:users" ]
                     },
                     "when": [
                         {
@@ -356,7 +356,7 @@
             [
                 {
                     "guarded": {
-                        "jwt0": [ "read:tasks" ]
+                        "jwt0": [ "read:channels" ]
                     },
                     "when":
                     [
@@ -381,7 +381,7 @@
                 },
                 {
                     "guarded": {
-                        "jwt0": [ "read:tasks" ]
+                        "jwt0": [ "read:channels" ]
                     },
                     "when":
                     [
@@ -402,6 +402,26 @@
                                 }
                             }
                         ],
+                        "event":
+                        {
+                            "id": "[\"${base64(key)}\",\"${etag}\"]"
+                        }
+                    }
+                },
+                {
+                    "guarded": {
+                        "jwt0": [ "read:channels" ]
+                    },
+                    "when":
+                    [
+                        {
+                            "path": "/channels"
+                        }
+                    ],
+                    "exit": "kafka_cache_client0",
+                    "with":
+                    {
+                        "topic": "channels",
                         "event":
                         {
                             "id": "[\"${base64(key)}\",\"${etag}\"]"

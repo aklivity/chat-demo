@@ -97,6 +97,8 @@
 <script>
 import { useAuth0 } from '@auth0/auth0-vue';
 import {mapActions} from "vuex";
+import {default as axios} from "axios";
+import jwt_decode from "jwt-decode";
 
 export default {
   name: "NavBar",
@@ -113,7 +115,31 @@ export default {
     ...mapActions([
         'unload'
     ]),
-    logout() {
+    async logout() {
+      const accessToken = await this.auth0.getAccessTokenSilently();
+      const decodedToken = jwt_decode(accessToken);
+      const userId = decodedToken.sub.split("|")[1];
+      const userInfo = this.auth0.user.value;
+      const status = "offline";
+
+      const currentUser = {
+        id: `${userId}`,
+        username: userInfo.nickname,
+        name: userInfo.name,
+        status: status
+      };
+
+      await axios.put(`http://localhost:8080/users/${userId}`, {
+        username: currentUser.username,
+        name: currentUser.name,
+        status: status
+      }, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+
+      await this.unload();
       this.auth0.logout({
         returnTo: window.location.origin
       });

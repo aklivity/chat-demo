@@ -71,9 +71,9 @@ services:
       CHAT_MESSAGEs_TOPIC: messages
 
   zilla:
-    image: "ghcr.io/aklivity/zilla:latest"
+    image: "ghcr.io/aklivity/zilla:develop-SNAPSHOT"
     hostname: "zilla"
-    command: [ "start", "-v", "-e" ]
+    command: [ "start", "-v", "-e"]
     volumes:
       - ./zilla.json:/zilla.json:ro
     networks:
@@ -81,3 +81,6 @@ services:
     ports:
       - "8080:8080"
       - "9090:9090"
+      - "4444:4444"
+    environment:
+      - JAVA_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:4444

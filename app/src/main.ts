@@ -33,9 +33,9 @@ library.add(faLink, faUser, faPowerOff);
         createAuth0({
             domain,
             client_id,
-            redirect_uri: window.location.origin,
-            audience:"http://localhost:8080/tasks",
-            scope:"read:tasks write:tasks"
+            redirect_uri: `${window.location.origin}`,
+            audience:"http://localhost:8080/chat",
+            scope:"read:users write:users read:channels write:channels read:subscriptions write:subscriptions"
         })
     )
     .provide("$error", ref(null))

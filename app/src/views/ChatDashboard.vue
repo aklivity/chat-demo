@@ -32,7 +32,7 @@
 import ChannelList from '@/components/ChannelList.vue'
 import MessageList from '@/components/MessageList.vue'
 import MessageForm from '@/components/MessageForm.vue'
-import UserList from '@/components/UserList.vue'
+import UserList from '@/components/MemberList.vue'
 import {mapMutations, mapState} from 'vuex';
 import {useAuth0} from "@auth0/auth0-vue";
 import jwt_decode from "jwt-decode";
@@ -93,14 +93,15 @@ export default {
           headers: {
             Authorization: `Bearer ${accessToken}`
           }
-        });
-
-        this.setUser({
-          id: currentUser.id,
-          username: currentUser.username,
-          name: currentUser.name,
-          state: currentUser.status
         })
+        .then(() => {
+          this.setUser({
+            id: currentUser.id,
+            username: currentUser.username,
+            name: currentUser.name,
+            state: currentUser.status
+          })
+        });
 
         this.setReconnect(false);
         this.setLoading(false);

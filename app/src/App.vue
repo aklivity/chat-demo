@@ -1,11 +1,7 @@
 <template>
-  <div id="app" class="d-flex flex-column h-100">
+  <div id="app">
     <nav-bar />
-    <div class="container flex-grow-1">
-      <div class="mt-5">
-        <router-view />
-      </div>
-    </div>
+    <router-view/>
   </div>
 </template>
 <script>

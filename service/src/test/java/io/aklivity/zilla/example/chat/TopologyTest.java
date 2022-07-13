@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
+import io.aklivity.zilla.example.chat.handler.CommandController;
 import io.aklivity.zilla.example.chat.model.Command;
 import io.aklivity.zilla.example.chat.model.SubscribeCommand;
 import io.aklivity.zilla.example.chat.model.Subscription;
@@ -52,7 +53,7 @@ public class TopologyTest
     public void setUp()
     {
         final StreamsBuilder builder = new StreamsBuilder();
-        final ChatTopology processor = new ChatTopology();
+        final ChatTopology processor = new ChatTopology(new CommandController());
         processor.chatSubscriptionsTopic = CHAT_SUBSCRIPTIONS_TOPIC;
         processor.chatCommandsTopic = CHAT_COMMANDS_TOPIC;
         processor.chatUsersTopic = CHAT_USERS_TOPIC;

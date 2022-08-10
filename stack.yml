@@ -77,7 +77,6 @@ services:
     volumes:
       - ./zilla.json:/zilla.json:ro
       - ./app/dist:/app/dist:ro
-
     networks:
       - net0
     ports:

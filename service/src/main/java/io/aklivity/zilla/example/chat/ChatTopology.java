@@ -17,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.aklivity.zilla.example.chat.handler.CommandController;
+import io.aklivity.zilla.example.chat.handler.SubscribeCommandHandler;
+import io.aklivity.zilla.example.chat.handler.UnsubscribeCommandHandler;
 import io.aklivity.zilla.example.chat.model.Command;
 import io.aklivity.zilla.example.chat.model.SubscribeCommand;
 import io.aklivity.zilla.example.chat.model.Subscriber;
@@ -34,6 +37,8 @@ public class ChatTopology
     private final Serde<User> userSerde = SerdeFactory.jsonSerdeFor(User.class, false);
     private final Serde<Subscriber> subscriberSerde = SerdeFactory.jsonSerdeFor(Subscriber.class, false);
     private final Serde<Subscription> subscriptionSerde = SerdeFactory.jsonSerdeFor(Subscription.class, false);
+    private final CommandController commandController;
+
     @Value("${chat.subscriptions.topic}")
     String chatSubscriptionsTopic;
     @Value("${chat.commands.topic}")
@@ -41,8 +46,11 @@ public class ChatTopology
     @Value("${chat.users.topic}")
     String chatUsersTopic;
 
-    public ChatTopology()
+    public ChatTopology(CommandController commandController)
     {
+        this.commandController = commandController;
+        this.commandController.addHandler(SubscribeCommand.class, new SubscribeCommandHandler());
+        this.commandController.addHandler(UnsubscribeCommand.class, new UnsubscribeCommandHandler());
     }
 
     @Autowired
@@ -50,31 +58,7 @@ public class ChatTopology
     {
         final KTable<String, Subscriber> subscriberTable = streamBuilder.stream(this.chatCommandsTopic,
                 Consumed.with(this.stringSerde, this.commandSerde))
-                .map((key, value) ->
-                {
-                    if (value instanceof SubscribeCommand)
-                    {
-                        SubscribeCommand command = (SubscribeCommand)value;
-                        final String userId = command.getUserId();
-                        final String channelId = command.getChannelId();
-                        return new KeyValue(String.format("%sZ%s", userId, channelId),
-                                Subscriber.builder()
-                                        .userId(userId)
-                                        .channelId(channelId)
-                                        .build());
-                    }
-                    else if (value instanceof UnsubscribeCommand)
-                    {
-                        UnsubscribeCommand command = (UnsubscribeCommand)value;
-                        final String userId = command.getUserId();
-                        final String channelId = command.getChannelId();
-                        return new KeyValue(String.format("%sZ%s", userId, channelId), null);
-                    }
-                    else
-                    {
-                        throw new UnsupportedOperationException("Unsupported command");
-                    }
-                })
+                .map((key, value) -> commandController.handle(value))
                 .toTable(Materialized.<String, Subscriber, KeyValueStore<String, Subscriber>>
                                 as("SUBSCRIBER-MV")
                         .withKeySerde(stringSerde)

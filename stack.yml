@@ -71,11 +71,11 @@ services:
       CHAT_MESSAGEs_TOPIC: messages
 
   zilla:
-    image: "ghcr.io/aklivity/zilla:develop-SNAPSHOT"
+    image: "ghcr.io/aklivity/zilla:latest"
     hostname: "zilla"
     command: [ "start", "-v", "-e"]
     volumes:
-      - ./zilla.json:/zilla.json:ro
+      - ./zilla.json:/etc/zilla/zilla.json:ro
       - ./app/dist:/app/dist:ro
     networks:
       - net0

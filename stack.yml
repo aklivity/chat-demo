@@ -75,7 +75,7 @@ services:
     hostname: "zilla"
     command: [ "start", "-v", "-e"]
     volumes:
-      - ./zilla.json:/etc/zilla/zilla.json:ro
+      - ./zilla.yaml:/etc/zilla/zilla.yaml:ro
       - ./app/dist:/app/dist:ro
     networks:
       - net0

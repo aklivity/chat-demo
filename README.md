@@ -45,8 +45,8 @@ which uses Auth0 platform.
 
 ```shell
 cd app
-npm install
-npm run build
+yarn install
+yarn run build
 cd ..
 ```
 
@@ -55,20 +55,20 @@ The above command will generate `dist` folder with all the necessary files to be
 ## Zilla API Gateway
 Zilla API Gateway will be hosting both app UI and APIs. Following endpoints are configured in `zilla.jon`
 
-|  Protocol |Method |Endpoint   |Topic |
-| ------------ | ------------ | ------------ | ------------ |
-|SSE   |GET   |/channels/*/messages   | messages  |
-|SSE |GET   |/channels/*/members   | subscriptions  |
-|SSE   |GET   |/channels   | channels  |
-|HTTP  |POST   |/channels/{id}/messages   |messages   |
-|HTTP   |POST   |/channels   |channels   |
-|HTTP   |GET   |/channels   |channels   |
-|HTTP   |GET   |/channels/{id}   | channels  |
-|HTTP   |GET   |/subscription/subscribe   |commands   |
-|HTTP   |POST   |/users   | users  |
-|HTTP   |PUT   |/users/{id}   | users  |
-|HTTP   |GET   |/users   |users   |
-|HTTP   |GET   |/users/{id}   | users  |
+| Protocol | Method | Endpoint                | Topic         |
+|----------|--------|-------------------------|---------------|
+| SSE      | GET    | /channels/*/messages    | messages      |
+| SSE      | GET    | /channels/*/members     | subscriptions |
+| SSE      | GET    | /channels               | channels      |
+| HTTP     | POST   | /channels/{id}/messages | messages      |
+| HTTP     | POST   | /channels               | channels      |
+| HTTP     | GET    | /channels               | channels      |
+| HTTP     | GET    | /channels/{id}          | channels      |
+| HTTP     | GET    | /subscription/subscribe | commands      |
+| HTTP     | POST   | /users                  | users         |
+| HTTP     | PUT    | /users/{id}             | users         |
+| HTTP     | GET    | /users                  | users         |
+| HTTP     | GET    | /users/{id}             | users         |
 
 
 ## Launch the stack

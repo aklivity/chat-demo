@@ -7,6 +7,9 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
+  "engines": {
+    "node": ">=16.0.0 <20.0.0"
+  },
   "dependencies": {
     "@auth0/auth0-spa-js": "github:auth0/auth0-spa-js",
     "@auth0/auth0-vue": "^1.0.2",
@@ -46,8 +49,8 @@
     "error-stack-parser": "2.0.6",
     "eslint": "^7.5.0",
     "eslint-plugin-vue": "^7.0.0",
-    "node-sass": "^7.0.1",
-    "sass-loader": "^12.6.0",
+    "node-sass": "^9.0.0",
+    "sass-loader": "^13.3.3",
     "typescript": "~4.7.2"
   },
   "eslintConfig": {
